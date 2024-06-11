@@ -3,17 +3,19 @@ from datetime import datetime
 import os
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
+import json
 
 app = Flask(__name__)
-app.secret_key = 'your_generated_secret_key'  # 生成された秘密鍵をここに設定します
+app.secret_key = 'your_generated_secret_key'
 
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-SERVICE_ACCOUNT_FILE = 'credentials.json'
 
-credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+# 環境変数からcredentials.jsonの内容を読み込む
+credentials_info = json.loads(os.getenv('GOOGLE_APPLICATION_CREDENTIALS_JSON'))
+credentials = service_account.Credentials.from_service_account_info(credentials_info, scopes=SCOPES)
+
 sheets_service = build('sheets', 'v4', credentials=credentials)
-
-SPREADSHEET_ID = '1REDUL2cKWozcH1wVOJOPBbySEGENA8t2RstmgrWQDY4'  # GoogleスプレッドシートのID
+SPREADSHEET_ID = '1REDUL2cKWozcH1wVOJOPBbySEGENA8t2RstmgrWQDY4'
 
 customer_count = 0
 
